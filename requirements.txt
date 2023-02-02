@@ -1,0 +1,4 @@
+brotli_asgi
+fastapi
+starlette
+uvicorn
