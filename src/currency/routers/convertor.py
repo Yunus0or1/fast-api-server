@@ -3,7 +3,9 @@ from typing import Mapping, Any
 
 import requests
 from fastapi import APIRouter
-from pydantic import BaseModel
+from models.currency_model import CurrencyRequest, CurrencyResponse
+
+from src.middlewares.jwt_token_middleware import jwt_token_middleware
 
 log = logging.getLogger("simple_example")
 
@@ -14,18 +16,9 @@ router = APIRouter(
 
 
 @router.get("/")
+@jwt_token_middleware
 async def root() -> Mapping[str, str]:
     return {"message": "Welcome to the Currency Convertor API"}
-
-
-class CurrencyRequest(BaseModel):
-    init_currency: str
-    target_currency: str
-    amount: float
-
-
-class CurrencyResponse(BaseModel):
-    target_amount: Any
 
 
 @router.post("/convert", response_model=CurrencyResponse)
