@@ -10,7 +10,7 @@ log = logging.getLogger("currency_convertor")
 
 
 def get_app() -> FastAPI:
-    app = FastAPI()
+    app = FastAPI(debug=True)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=["*"],

@@ -1,13 +1,10 @@
-import logging
 from typing import Mapping, Any
-
 import requests
-from fastapi import APIRouter
-from models.currency_model import CurrencyRequest, CurrencyResponse
-
-from src.middlewares.jwt_token_middleware import jwt_token_middleware
-
-log = logging.getLogger("simple_example")
+from fastapi import APIRouter, Depends
+from currency.models.currency_model import CurrencyRequest, CurrencyResponse
+from currency.middlewares.jwt_token_middleware import verify_token
+from currency.util.log import log
+from fastapi import Depends
 
 router = APIRouter(
     tags=["convertor"],
@@ -15,9 +12,9 @@ router = APIRouter(
 )
 
 
-@router.get("/")
-@jwt_token_middleware
+@router.get("/", dependencies=[Depends(verify_token)])
 async def root() -> Mapping[str, str]:
+    log.info('Hello 22222')
     return {"message": "Welcome to the Currency Convertor API"}
 
 
