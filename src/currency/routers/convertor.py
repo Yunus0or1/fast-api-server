@@ -1,6 +1,6 @@
 from typing import Mapping, Any
 import requests
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from currency.models.currency_model import CurrencyRequest, CurrencyResponse
 from currency.middlewares.jwt_token_middleware import verify_token
 from currency.util.log import log
@@ -14,8 +14,11 @@ router = APIRouter(
 
 @router.get("/", dependencies=[Depends(verify_token)])
 async def root() -> Mapping[str, str]:
-    log.info('Hello 22222')
-    return {"message": "Welcome to the Currency Convertor API"}
+    try:
+        return {"message": "Welcome to the Currency Convertor API"}
+    except Exception as error:
+        log.error('Error in root => ', error)
+        raise HTTPException(500, detail="Something went wrong.")
 
 
 @router.post("/convert", response_model=CurrencyResponse)
@@ -36,7 +39,8 @@ async def convert(
         else:
             break
 
-    url = ('https://api.apilayer.com/fixer/convert?to='+ currency_request.target_currency + '&from=' + currency_request.init_currency +'&amount=' + str(amount))
+    url = ('https://api.apilayer.com/fixer/convert?to=' + currency_request.target_currency +
+           '&from=' + currency_request.init_currency + '&amount=' + str(amount))
 
     payload = {}
     headers = {'apikey': 'YOUR-API-KEY'}

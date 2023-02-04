@@ -4,5 +4,6 @@ uvicorn==0.18.2
 pydantic==1.10.4
 requests==2.28.2
 pytest==7.1.2
+httpx
 python-dotenv
 starlette
