@@ -1,4 +1,4 @@
-from typing import Mapping, Any
+from typing import Mapping
 import requests
 from fastapi import APIRouter, Depends, HTTPException
 from currency.models.currency_model import CurrencyRequest, CurrencyResponse

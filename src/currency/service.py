@@ -1,9 +1,7 @@
 import logging
-
 from brotli_asgi import BrotliMiddleware
 from fastapi.applications import FastAPI
 from starlette.middleware.cors import CORSMiddleware
-
 from .routers import convertor
 
 log = logging.getLogger("currency_convertor")

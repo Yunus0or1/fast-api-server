@@ -3,33 +3,34 @@
 import uvicorn
 
 import currency
-from currency.config import PORT
+from currency.config import Config
 from currency.service import get_app
 from currency.util.log import log
 
 
+def main() -> None:
+    config = Config()
+    config.verify()
 
-def main(port: int = PORT) -> None:
     log.info(
-        f"Starting service {currency.__version__ or '???'} on port {port}",
+        f"Starting service {currency.__version__ or '???'} on port {config.PORT}",
     )
     app = get_app()
-
-    # uvicorn.run(
-    #     app,
-    #     host="0.0.0.0",
-    #     port=port,
-    #     workers=1,
-    # )
-
-    uvicorn.run(
-        'currency.service:get_app',
-        host="0.0.0.0",
-        port=port,
-        workers=1,
-        reload=True
-    )
-
+    if config.DEBUG == 'enabled':
+        uvicorn.run(
+            'currency.service:get_app',
+            host="0.0.0.0",
+            port=config.PORT,
+            workers=1,
+            reload=True
+        )
+    else:
+        uvicorn.run(
+            app,
+            host="0.0.0.0",
+            port=config.PORT,
+            workers=1,
+        )
 
 
 if __name__ == "__main__":
