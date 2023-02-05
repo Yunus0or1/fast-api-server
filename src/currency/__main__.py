@@ -3,15 +3,13 @@
 import uvicorn
 
 import currency
-from currency.config import Config
+from currency import config
 from currency.service import get_app
 from currency.util.log import log
 
+config.verify()
 
 def main() -> None:
-    config = Config()
-    config.verify()
-
     log.info(
         f"Starting service {currency.__version__ or '???'} on port {config.PORT}",
     )
