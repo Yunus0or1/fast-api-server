@@ -28,38 +28,52 @@ async def convert(
         currency_request: CurrencyRequest
 ) -> Any:
     try:
-        amount = None
-        while True:
-            try:
-                amount = currency_request.amount
-            except:
-                print('The amount must be a numeric value!')
-                continue
+        amount = currency_request.amount
+        if amount is None:
+            return JSONResponse(status_code=400,
+                                content={"message": "The amount must be a numeric value!",
+                                         "error": True})
 
-            if not amount > 0:
-                print('The amount must be greater than 0')
-                continue
-            else:
-                break
+        if not amount > 0:
+            return JSONResponse(status_code=400,
+                                content={"message": "The amount must be greater than 0.",
+                                         "error": True})
 
-        url = (config.CONVERTER_API + '?to=' + currency_request.target_currency +
-               '&from=' + currency_request.init_currency + '&amount=' + str(amount))
+        result = fetchCurrencyApiData(currency_request)
 
-        payload = {}
-        headers = {'apikey': config.CONVERTER_API_KEY}
-        response = requests.request('GET', url, headers=headers, data=payload)
+        if "error" in result:
+            return JSONResponse(status_code=400,
+                                content={"message": result["message"], "error": True})
 
-        result = response.json()
-        status_code = response.status_code
-
-        if status_code != 200 or "error" in result:
-            errorMessage = result["error"]["info"]
-            log.error('Error in convert status_code =>', result)
-            return JSONResponse(status_code=status_code, content={"error": "Something went wrong in fetching API. Error => " + errorMessage})
-
-        result = response.json()
-        return CurrencyResponse(target_amount=result['result'])
+        return CurrencyResponse(target_amount=result['message'])
 
     except Exception as error:
-        log.error('Error in convert =>')
+        log.error('Error in convert => ', error)
         raise HTTPException(500, message="Something went wrong.")
+
+
+def fetchCurrencyApiData(currency_request: CurrencyRequest) -> Any:
+    url = (config.CONVERTER_API + '?to=' + currency_request.target_currency +
+           '&from=' + currency_request.init_currency + '&amount=' + str(currency_request.amount))
+    payload = {}
+    headers = {'apikey': config.CONVERTER_API_KEY}
+
+    retry = 0
+    while retry < 2:
+        try:
+            response = requests.request(
+                'GET', url, headers=headers, data=payload)
+            result = response.json()
+            status_code = response.status_code
+
+            if status_code != 200 or "error" in result:
+                errorMessage = result["error"]["info"]
+                log.error('Error in convert status_code =>', result)
+                return {"error": True, "message": errorMessage, "status_code": status_code}
+
+            return {"message": result['result'], "status_code": status_code}
+        except Exception as error:
+            log.error('Error in fetchCurrencyApiData =>', error)
+            retry = retry + 1
+
+    return {"error": True, "message": "Could not fetch from currency", "status_code": 500}
