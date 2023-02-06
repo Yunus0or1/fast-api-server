@@ -23,7 +23,7 @@ async def root() -> Mapping[str, str]:
         raise HTTPException(500, detail="Something went wrong.")
 
 
-@router.post("/convert", response_model=CurrencyResponse)
+@router.post("/convert", dependencies=[Depends(verify_token)], response_model=CurrencyResponse)
 async def convert(
         currency_request: CurrencyRequest
 ) -> Any:

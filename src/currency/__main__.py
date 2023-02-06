@@ -9,6 +9,7 @@ from currency.util.log import log
 
 config.verify()
 
+
 def main() -> None:
     log.info(
         f"Starting service {currency.__version__ or '???'} on port {config.PORT}",
