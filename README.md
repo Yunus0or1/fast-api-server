@@ -1,24 +1,6 @@
 # Currency Convertor
 This is an API to convert currencies.
 
-## Installation & Setup
-
-Minimum requirements
-* [Poetry](https://python-poetry.org)
-* Python 3.9.13
-* Sign up and get an api key from https://apilayer.com/marketplace/fixer-api
-
-First run
-```sh
-poetry install
-```
-this should create a new virtual environment located in `.venv` or `venv` directory
-(depending on how poetry config is set up).
-## Run the service locally
-```sh
-poetry run python -m currency
-```
-
 ## Objectives
 * To improve this service however you see fit.
 * This should be timeboxed to around 1-2 hours.
@@ -31,5 +13,24 @@ poetry run python -m currency
   "amount": 10.0
 }
 ```
-* The docs can be accessed through `http://localhost:9898/docs`
 
+## Installation & Setup
+
+Minimum requirements
+* Could not use Poetry for different version problem. Moved to pip
+* install using this command => pip install -r requirements.txt
+* Pushed the .env file for the convenience. Just paste the API key. You can get the API from here => https://apilayer.com/marketplace/fixer-api
+
+## Run
+
+* Change directory to => src
+* Run this command => python -m currency
+
+## Test
+
+* Be in the root directory.
+* python -m pytest -s
+
+## Doc
+* The postman collections can be used to test the APIs.
+* The docs can be accessed through `http://localhost:9898/docs`

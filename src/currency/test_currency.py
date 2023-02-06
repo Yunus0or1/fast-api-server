@@ -28,3 +28,24 @@ def test_currency_converter_2():
     response = client.post("/currency/convert/",
                            headers=headers, json=currency_request.to_json())
     assert response.status_code == 400
+
+def test_currency_converter_3():
+    currency_request = CurrencyRequest(
+        init_currency="GBPs", target_currency="USD", amount=-1)
+    response = client.post("/currency/convert/",
+                           headers=headers, json=currency_request.to_json())
+    result = response.json()
+    assert result['message'] == 'The amount must be greater than 0.'
+    assert response.status_code == 400
+
+
+def test_currency_converter_4():
+    currency_request = CurrencyRequest(
+        init_currency="GBP", target_currency="USD", amount=10000000000000000000000)
+    response = client.post("/currency/convert/",
+                           headers=headers, json=currency_request.to_json())
+    result = response.json()
+    print(result)
+    assert result['message'] == 'The amount is too big.'
+    assert response.status_code == 400
+

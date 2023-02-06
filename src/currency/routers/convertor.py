@@ -4,7 +4,6 @@ from fastapi import APIRouter, Depends, HTTPException
 from currency.models.currency_model import CurrencyRequest, CurrencyResponse
 from currency.middlewares.jwt_token_middleware import verify_token
 from currency.util.log import log
-from fastapi import Depends
 from currency import config
 from fastapi.responses import JSONResponse
 
@@ -37,6 +36,11 @@ async def convert(
         if not amount > 0:
             return JSONResponse(status_code=400,
                                 content={"message": "The amount must be greater than 0.",
+                                         "error": True})
+
+        if amount > 999999999999999:
+            return JSONResponse(status_code=400,
+                                content={"message": "The amount is too big.",
                                          "error": True})
 
         result = fetchCurrencyApiData(currency_request)
