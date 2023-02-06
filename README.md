@@ -28,7 +28,7 @@ Minimum requirements
 
 ## Test
 
-* Be in the root directory.
+* Be in directory => src
 * python -m pytest -s
 
 ## Doc
